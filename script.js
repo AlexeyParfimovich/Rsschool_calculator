@@ -11,26 +11,39 @@ class Calculator {
         this.previousOperandTextElement.innerText = '';
         this.previousOperand = '';
         this.currentOperand = '';
-        this.operation = undefined;
+        this.operation = '';
     }
 
     delete() {
+        // If the current operand is a result of a calculation we can't change it!
+        if( typeof(this.currentOperand) !== 'string') return;
+        // If the current operand is empty but operation is not empty let's clear it!
+        //if(this.currentOperand === '' && this.operation !== '') this.operation = '';
+        // In other cases let's try to delete the last character of current operand 
         this.currentOperand = this.currentOperand.slice(0,-1);
     }
 
     appendNumber(number) {
+        // If the current operand is a result of a calculation we can't change it!
+        if(typeof(this.currentOperand) !== 'string') return;
+        // If we get a comma but we already have got it - leave it!
         if( number === '.' && this.currentOperand.includes('.') ) return;
-
-        //this.currentOperand =  this.currentOperand + number;
-        this.currentOperand.toString() + number.toString();
+        // Otherwise add number to the current operand
+        this.currentOperand =  this.currentOperand.toString() + number.toString();
     }
 
     chooseOperation(operation) {
-        if(this.currentOperand === '') return;
+        if(this.currentOperand === '' || this.currentOperand === '.') return;
 
-        //this.operation = operation;
         if(this.previousOperand !== '') this.compute(); 
 
+        switch(operation){
+            case 'xy': 
+                this.operation = '^';
+                break;
+            case 'y&radic;'
+
+        }
         this.operation = operation;
         this.previousOperand = this.currentOperand; // + this.operation;
         this.currentOperand = '';
@@ -68,14 +81,14 @@ class Calculator {
     getDisplayNumber(number) {
 
         const stringNumber = number.toString(),
-              integerPart = parseFloat(stringNumber.split('.'[0])),
-              decimalPart = parseFloat(stringNumber.split('.'[1]));
+              integerPart = parseFloat(stringNumber.split('.')[0]),
+              decimalPart = stringNumber.split('.')[1];
         let display = '';
 
         if(isNaN(integerPart)) display = '';
         else display = integerPart.toLocaleString('en', { maximumFractionDigits:0} );
 
-        if(decimalPart != null) return `${display}.${decimalPart}`;
+        if( decimalPart != null ) return `${display}.${decimalPart}`;
         else return display;
     }
 
@@ -83,8 +96,10 @@ class Calculator {
 
         this.currentOperandTextElement.innerText = this.getDisplayNumber(this.currentOperand);
 
-        if(this.operation != null) {
+        if( this.operation != '' ) {
             this.previousOperandTextElement.innerText = `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`
+        } else {
+            this.previousOperandTextElement.innerText = '';
         }
     }
 }
