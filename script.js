@@ -55,7 +55,20 @@ class Calculator {
 
         if(this.previousOperand !== '') this.compute(); 
 
-        this.operation = operation;
+        switch(operation){
+            case 'n√x':
+                this.operation = 'yroot';
+                break;
+            case 'xn':
+                this.operation = '^';
+                break;
+            case 'lgn':
+                this.operation = 'log';
+                break;
+            default:
+                this.operation = operation;        
+        }
+        //this.operation = operation;
         this.previousOperand = this.currentOperand;
         this.currentOperand = '';
     }
@@ -82,6 +95,15 @@ class Calculator {
             case '÷':
                 result = prev / curr;
                 break;
+            case 'yroot':
+                result = prev ** (1 / curr);
+                break;
+            case '^':
+                result = prev ** curr;
+                break;
+            case 'log':
+                result = Math.log(prev) / Math.log(curr);
+                break;
             default: 
                 return;
         }
@@ -93,16 +115,19 @@ class Calculator {
 
     getDisplayNumber(number) {
 
-        const stringNumber = number.toString(),
-              integerPart = parseFloat(stringNumber.split('.')[0]),
-              decimalPart = stringNumber.split('.')[1];
-        let display = '';
+        if(number !== number || typeof(number) === 'string' ) return number;
+        else return parseFloat(number.toPrecision(10));
 
-        if(isNaN(integerPart)) display = '';
-        else display = integerPart.toLocaleString('en', { maximumFractionDigits:0} );
+        // const stringNumber = number.toString(),
+        //       integerPart = parseFloat(stringNumber.split('.')[0]),
+        //       decimalPart = stringNumber.split('.')[1];
+        // let display = number;
 
-        if( decimalPart != null ) return `${display}.${decimalPart}`;
-        else return display;
+        // if(isNaN(integerPart)) display = '';
+        // else display = integerPart.toLocaleString('en', { maximumFractionDigits:0} );
+
+        // if( decimalPart != null ) return `${display}.${decimalPart}`;
+        // else return display;
     }
 
     updateDisplay(updateAllValues = true) {
