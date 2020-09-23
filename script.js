@@ -17,8 +17,6 @@ class Calculator {
     delete() {
         // If the current operand is a result of a calculation we can't change it!
         if( typeof(this.currentOperand) !== 'string') return;
-        // If the current operand is empty but operation is not empty let's clear it!
-        //if(this.currentOperand === '' && this.operation !== '') this.operation = '';
         // In other cases let's try to delete the last character of current operand 
         this.currentOperand = this.currentOperand.slice(0,-1);
     }
@@ -39,7 +37,7 @@ class Calculator {
 
         if( isNaN(curr) ) return;
 
-        switch(this.operation) {
+        switch(operation) {
             case '1/x': 
                 result = 1 / curr;
                 break;
@@ -49,9 +47,7 @@ class Calculator {
             default: 
                 return;
         }
-
         this.currentOperand = result;
-        this.operation = '';
     }
 
     chooseDuoOperation(operation) {
@@ -60,7 +56,7 @@ class Calculator {
         if(this.previousOperand !== '') this.compute(); 
 
         this.operation = operation;
-        this.previousOperand = this.currentOperand; // + this.operation;
+        this.previousOperand = this.currentOperand;
         this.currentOperand = '';
     }
 
@@ -109,8 +105,10 @@ class Calculator {
         else return display;
     }
 
-    updateDisplay() {
+    updateDisplay(updateAllValues = true) {
         this.currentOperandTextElement.innerText = this.getDisplayNumber(this.currentOperand);
+
+        if(!updateAllValues) return;
 
         if( this.operation != '' ) {
             this.previousOperandTextElement.innerText = `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`;
@@ -134,14 +132,14 @@ const calculator = new Calculator(previousOperandTextElement, currentOperandText
 numberButtons.forEach(button => { 
     button.addEventListener('click', () => {
         calculator.appendNumber(button.innerText);
-        calculator.updateDisplay();
+        calculator.updateDisplay(); // update display both for current and previous values
     });
 });
 
 unoOperationButtons.forEach(button => { 
     button.addEventListener('click', () => {
         calculator.computeUnoOperation(button.innerText);
-        calculator.updateDisplay();
+        calculator.updateDisplay(false); // update display only current value!
     });
 });
 
